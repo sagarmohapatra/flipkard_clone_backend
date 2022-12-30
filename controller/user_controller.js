@@ -1,7 +1,8 @@
+
 import User from "../model/user_Schima"
-const userSignup = async (request, responce) => {
+export const userSignup = async (request, responce) => {
     try {
-        const exist = await User.findOne({ user: request.body.user })
+        const exist = await User.findOne({ username: request.body.username })
         if (exist) {
             return responce.status(401).json({ message: "username already exist" })
         }
@@ -10,7 +11,6 @@ const userSignup = async (request, responce) => {
         const user = request.body
         console.log(user);
         const newUser = new User(user)
-        // console.log(newUser);
         await newUser.save()
         return responce.status(200).json({ message: user })
     } catch (error) {
@@ -19,4 +19,19 @@ const userSignup = async (request, responce) => {
     }
 }
 
-export default userSignup
+export const userlogin = async (request, responce) => {
+    try {
+        const username = request.body.username;
+        const password = request.body.password;
+        const user = await User.findOne({ username: username, password: password });
+        if (user) {
+            return responce.status(200).json({ data: user })
+        } else {
+            return responce.status(401).json("invalid login")
+        }
+
+    } catch (error) {
+        responce.status(500).json({ message: error.message })
+        // console.log(error);
+    }
+}
